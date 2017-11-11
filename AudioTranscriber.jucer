@@ -10,6 +10,13 @@
             file="Source/MainComponent.cpp"/>
       <FILE id="fWYw1c" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="RLrAsK" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="NhHmdW" name="Audio.cpp" compile="1" resource="0" file="Source/Audio.cpp"/>
+      <FILE id="AoA7EM" name="Audio.h" compile="0" resource="0" file="Source/Audio.h"/>
+      <FILE id="ltZnPd" name="AudioFileTransportComponent.cpp" compile="1"
+            resource="0" file="Source/AudioFileTransportComponent.cpp"/>
+      <FILE id="mOCcUe" name="AudioFileTransportComponent.h" compile="0"
+            resource="0" file="Source/AudioFileTransportComponent.h"/>
+      <FILE id="ynxlYc" name="Ids.h" compile="0" resource="0" file="Source/Ids.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

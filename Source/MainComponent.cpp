@@ -12,7 +12,7 @@
 //==============================================================================
 MainContentComponent::MainContentComponent(String name) : aftc(audio), vt(Ids::TRANSCRIPTFILE)
 {
-    setSize (600, 400);
+    setSize (800, 800);
     menuBar.setModel(this);
     addAndMakeVisible(menuBar);
     
@@ -99,7 +99,7 @@ void MainContentComponent::newValueTree()
 }
 bool MainContentComponent::saveBeforeClosing()
 {
-    AlertWindow aw ("Alert!", "Do you wish to save before opening a new file?", AlertWindow::WarningIcon, this);
+    AlertWindow aw ("Alert!", "Do you wish to save before opening a new file?", AlertWindow::WarningIcon, nullptr);
     aw.addButton("Yes", 0);
     aw.addButton("No", 1);
     aw.addButton("Cancel", 2);

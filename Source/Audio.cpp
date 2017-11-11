@@ -28,8 +28,8 @@ Audio::~Audio()
 void Audio::setFile(const File audioFile_)
 {
     DBG(audioFile_.getFullPathName());
-    if (currentFile != audioFile_)
-    {
+//    if (currentFile != audioFile_)
+//    {
         source->stop();
         //    source->releaseResources();
         audioFileSource = nullptr;
@@ -38,7 +38,7 @@ void Audio::setFile(const File audioFile_)
         vt.setProperty(Ids::audioFile, audioFile_.getFullPathName(), nullptr);
         listeners.call(&Listener::audioFileUpdated, source->getTotalLength()/adm.getCurrentAudioDevice()->getCurrentSampleRate());
         currentFile = audioFile_;
-    }
+//    }
 }
 void Audio::setFile(const String audioFileName_)
 {
@@ -46,6 +46,10 @@ void Audio::setFile(const String audioFileName_)
     {
         File audioFile(audioFileName_);
         setFile(audioFile);
+    }
+    else
+    {
+        DBG("Error! file name is empty");
     }
 }
 void Audio::startPlaying()

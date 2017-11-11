@@ -23,16 +23,16 @@ public:
     
     void buttonClicked(Button* button) override;
     
-    void timerCallback() override;
-    
     bool keyPressed (const KeyPress& key,
                      Component* originatingComponent) override;
-    
-    void resized() override;
     
     void audioFileUpdated(int64 fileLength) override;
     
 private:
+    
+    void timerCallback() override;
+    
+    void resized() override;
     
     Audio& audio;
     TextButton loadFileButton, playButton, stopButton, pauseButton;
