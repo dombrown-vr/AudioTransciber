@@ -19,6 +19,7 @@ namespace Ids
     static const Identifier audioFilePos("audioFilePos");
     static const Identifier filePath ("filePath");
     static const Identifier TRANSCRIPTFILE("TRANSCRIPTFILE");
+    static const Identifier playbackSpeed("playbackSpeed");
 }
 
 #endif

@@ -11,6 +11,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Audio.h"
 #include "AudioFileTransportComponent.h"
+#include "VideoFileTransportComponent.h"
 #include "Ids.h"
 //==============================================================================
 /*
@@ -63,8 +64,11 @@ private:
     bool saveBeforeClosing();
     
     MenuBarComponent menuBar;
-    Audio audio;
-    AudioFileTransportComponent aftc;
+
+    ScopedPointer<FileTransportComponent> fileTransport;
+    
+//    AudioFileTransportComponent aftc;
+//    VideoFileTransportComponent vftc;
     TextEditor editor;
     ListenerList<Listener> listeners;
     

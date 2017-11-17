@@ -8,7 +8,7 @@
 
 #include "AudioFileTransportComponent.h"
 
-AudioFileTransportComponent::AudioFileTransportComponent(Audio& a) : audio(a)
+AudioFileTransportComponent::AudioFileTransportComponent()
 {
     transportSlider.setSliderStyle(Slider::SliderStyle::LinearHorizontal);
     transportSlider.setRange(0.0, 1.0);
@@ -27,13 +27,21 @@ AudioFileTransportComponent::AudioFileTransportComponent(Audio& a) : audio(a)
     stopButton.addListener(this);
     addAndMakeVisible(stopButton);
     
-    loadFileButton.setButtonText("Load");
+    loadFileButton.setButtonText("Load Audio");
     loadFileButton.addListener(this);
     addAndMakeVisible(loadFileButton);
     
+    
+    speedSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
+    speedSlider.setRange(0.5, 2.0);
+    speedSlider.setSkewFactorFromMidPoint(1.0);
+    speedSlider.setValue(1.0);
+    addAndMakeVisible(speedSlider);
+    speedSlider.addListener(this);
+    
     addKeyListener(this);
 //    setWantsKeyboardFocus(true);
-    startTimer(50);
+    startTimer(100);
     audio.addListener(this);
     
     
@@ -53,6 +61,7 @@ void AudioFileTransportComponent::resized()
     playButton.setBounds(area.removeFromLeft(width));
     pauseButton.setBounds(area.removeFromLeft(width));
     stopButton.setBounds(area.removeFromLeft(width));
+    speedSlider.setBounds(area.removeFromLeft(width));
     
 }
 void AudioFileTransportComponent::sliderValueChanged(Slider* slider)
@@ -60,6 +69,10 @@ void AudioFileTransportComponent::sliderValueChanged(Slider* slider)
     if (slider == &transportSlider)
     {
         audio.setPosition(slider->getValue());
+    }
+    else if (slider == &speedSlider)
+    {
+        audio.setPlaybackSpeed(slider->getValue());
     }
 }
 void AudioFileTransportComponent::buttonClicked(Button* button)
@@ -90,15 +103,35 @@ void AudioFileTransportComponent::buttonClicked(Button* button)
 void AudioFileTransportComponent::timerCallback()
 {
     transportSlider.setValue( audio.getPosition(),dontSendNotification);
+    speedSlider.setValue(audio.getPlaybackSpeed(),dontSendNotification);
 }
+void AudioFileTransportComponent::setValueTree(ValueTree vt_)
+{
+    audio.setValueTree(vt_);
+}
+
 bool AudioFileTransportComponent:: keyPressed (const KeyPress& key,
                  Component* originatingComponent)
 {
-//    DBG(key.getTextDescription());
-//    DBG(key.getKeyCode());
+    DBG(key.getTextDescription());
     if (key.getModifiers().isCommandDown())
     {
-        if (key.getKeyCode() == 63235)
+        if (key.getKeyCode() == 13)
+        {
+            audio.togglePlaying();
+            return true;
+        }
+        if (key.getKeyCode() == 63232)
+        {
+            audio.setPlaybackSpeed(audio.getPlaybackSpeed()+0.05);
+            return true;
+        }
+        else if (key.getKeyCode() == 63233)
+        {
+            audio.setPlaybackSpeed(audio.getPlaybackSpeed()-0.05);
+            return true;
+        }
+        else if (key.getKeyCode() == 63235)
         {
             audio.setPosition(audio.getPosition()+5.0);
             return true;

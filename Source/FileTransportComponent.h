@@ -12,12 +12,18 @@
 #include <stdio.h>
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class FileTransportComponent
+class FileTransportComponent : public Component, public Slider::Listener, public Button::Listener, public KeyListener, public Timer
 {
 public:
-    FileTransportComponent();
-    virtual ~FileTransportComponent();
+    FileTransportComponent() {}
+    virtual ~FileTransportComponent() {}
+    
+    virtual void setValueTree(ValueTree vt_) {vt = vt_;}
+    
 protected:
+    TextButton loadFileButton, playButton, stopButton, pauseButton;
+    Slider transportSlider;
+    ValueTree vt;
 };
 
 

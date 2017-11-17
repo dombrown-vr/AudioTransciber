@@ -11,19 +11,24 @@
 
 #include <stdio.h>
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "FileTransportComponent.h"
 
-
-class VideoFileTransportComponent
+class VideoFileTransportComponent : public FileTransportComponent
 {
 public:
     VideoFileTransportComponent();
     ~VideoFileTransportComponent();
     
+    void resized() override;
+    
+    void sliderValueChanged (Slider* slider) override;
+    
+    void buttonClicked (Button*) override;
+    
+    void setValueTree(ValueTree vt_) override {}
+    
 private:
     VideoComponent video;
-    Slider transportBar;
-
-    
     
 };
 

@@ -34,6 +34,11 @@ public:
     void setPosition(double pos);
     double getPosition();
     
+    void setPlaybackSpeed(double speed_);
+    double getPlaybackSpeed();
+    
+    void togglePlaying();
+    
     AudioFormatManager fm;
     
     class Listener
@@ -46,7 +51,8 @@ public:
     
 private:
     ScopedPointer<AudioFormatReaderSource> audioFileSource;
-    ScopedPointer<AudioTransportSource> source;
+    ScopedPointer<AudioTransportSource> transportSource;
+    ScopedPointer<ResamplingAudioSource> resamplingSource;
     
     AudioDeviceManager adm;
     AudioSourcePlayer player;

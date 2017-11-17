@@ -13,32 +13,32 @@ Audio::Audio()
 {
     fm.registerBasicFormats();
 
-    source = new AudioTransportSource();
-    player.setSource(source);
+    transportSource = new AudioTransportSource();
+   
     adm.addAudioCallback(&player);
     adm.initialiseWithDefaultDevices(0, 2);
+    resamplingSource = new ResamplingAudioSource(transportSource, false);
+     player.setSource(resamplingSource);
     
 }
 Audio::~Audio()
 {
     listeners.clear();
-    source->releaseResources();
+    transportSource->releaseResources();
     adm.removeAudioCallback(&player);
 }
 void Audio::setFile(const File audioFile_)
 {
     DBG(audioFile_.getFullPathName());
-//    if (currentFile != audioFile_)
-//    {
-        source->stop();
-        //    source->releaseResources();
+
+        transportSource->stop();
         audioFileSource = nullptr;
-        audioFileSource = new AudioFormatReaderSource(fm.createReaderFor(audioFile_), true);
-        source->setSource(audioFileSource);
+    ScopedPointer<AudioFormatReaderSource> afrs = new AudioFormatReaderSource(fm.createReaderFor(audioFile_), true);
+    audioFileSource = afrs.release();
+        transportSource->setSource(audioFileSource);
         vt.setProperty(Ids::audioFile, audioFile_.getFullPathName(), nullptr);
-        listeners.call(&Listener::audioFileUpdated, source->getTotalLength()/adm.getCurrentAudioDevice()->getCurrentSampleRate());
+        listeners.call(&Listener::audioFileUpdated, transportSource->getTotalLength()/adm.getCurrentAudioDevice()->getCurrentSampleRate());
         currentFile = audioFile_;
-//    }
 }
 void Audio::setFile(const String audioFileName_)
 {
@@ -54,33 +54,33 @@ void Audio::setFile(const String audioFileName_)
 }
 void Audio::startPlaying()
 {
-    source->start();
+    transportSource->start();
 }
 void Audio::stopPlaying()
 {
-    source->stop();
+    transportSource->stop();
     setPosition(0.0);
 }
 void Audio::pausePlaying()
 {
-    source->stop();
+    transportSource->stop();
 }
 void Audio::setPosition(double pos)
 {
     DBG("new position: " << pos);
-    if (pos >= 0 && pos < source->getTotalLength())
+    if (pos >= 0 && pos < transportSource->getTotalLength())
     {
-        source->setPosition(pos);
+        transportSource->setPosition(pos);
     }
     else if (pos < 0)
     {
-        source->setPosition(0.0);
+        transportSource->setPosition(0.0);
     }
-    vt.setProperty(Ids::audioFilePos, source->getCurrentPosition(), nullptr);
+    vt.setProperty(Ids::audioFilePos, transportSource->getCurrentPosition(), nullptr);
 }
 double Audio::getPosition()
 {
-    double pos = source->getCurrentPosition();
+    double pos = transportSource->getCurrentPosition();
     vt.setProperty(Ids::audioFilePos, pos, nullptr);
     return pos;
 }
@@ -89,10 +89,36 @@ void Audio::setValueTree(ValueTree vt_)
     vt = vt_;
     String audioFile = vt.getProperty(Ids::audioFile);
     setFile(audioFile);
-    setPosition(vt.getProperty(Ids::audioFilePos));
+    setPosition(vt.getProperty(Ids::audioFilePos,0.0));
+    setPlaybackSpeed(vt.getProperty(Ids::playbackSpeed,1.0));
 }
 void Audio::addListener(Listener* toAdd)
 {
     ScopedLock sl(listenerLock);
     listeners.add(toAdd);
+}
+
+void Audio::setPlaybackSpeed(double speed_)
+{
+    resamplingSource->setResamplingRatio(speed_);
+    vt.setProperty(Ids::playbackSpeed, speed_, nullptr);
+}
+double Audio::getPlaybackSpeed()
+{
+    return resamplingSource->getResamplingRatio();
+}
+void Audio::togglePlaying()
+{
+    DBG("toggled");
+    if (transportSource->isPlaying())
+    {
+        pausePlaying();
+        DBG("paused");
+    }
+    else
+    {
+        startPlaying();
+        DBG("started");
+        
+    }
 }

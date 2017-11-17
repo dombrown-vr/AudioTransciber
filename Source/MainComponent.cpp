@@ -10,19 +10,21 @@
 
 
 //==============================================================================
-MainContentComponent::MainContentComponent(String name) : aftc(audio), vt(Ids::TRANSCRIPTFILE)
+MainContentComponent::MainContentComponent(String name) : vt(Ids::TRANSCRIPTFILE)
 {
-    setSize (800, 800);
+    fileTransport = new AudioFileTransportComponent();
+    
+    addAndMakeVisible(fileTransport);
     menuBar.setModel(this);
     addAndMakeVisible(menuBar);
     
-    addAndMakeVisible(aftc);
-    
     addAndMakeVisible(editor);
     
-    addKeyListener(&aftc);
+    
+    
+    addKeyListener(fileTransport);
 
-    editor.addKeyListener(&aftc);
+    editor.addKeyListener(fileTransport);
     addKeyListener(this);
     editor.setMultiLine(true);
     editor.setEscapeAndReturnKeysConsumed(true);
@@ -30,6 +32,7 @@ MainContentComponent::MainContentComponent(String name) : aftc(audio), vt(Ids::T
     
     setValueTree(name);
     
+    setSize (800, 800);
 }
 
 MainContentComponent::~MainContentComponent()
@@ -47,7 +50,9 @@ void MainContentComponent::resized()
     
     auto area (getLocalBounds());
     menuBar.setBounds(area.removeFromTop(20));
-    aftc.setBounds(area.removeFromTop(100));
+    fileTransport->setBounds(area.removeFromTop(100));
+
+    
     editor.setBounds(area);
 }
 void MainContentComponent:: saveValueTree()
@@ -141,7 +146,7 @@ void MainContentComponent::setValueTree(const String filename_)
         
     }
     editor.setText(vt.getProperty(Ids::text).toString());
-    audio.setValueTree(vt);
+    fileTransport->setValueTree(vt);
     DBG(vt.toXmlString());
     
     listeners.call(&Listener::fileNameChanged, filename_);
@@ -160,14 +165,17 @@ bool MainContentComponent:: keyPressed (const KeyPress& key,
         if (key.getKeyCode() == 83)
         {
             saveValueTree();
+            return true;
         }
         else if (key.getKeyCode() == 79)
         {
             openValueTree();
+            return true;
         }
         else if (key.getKeyCode() == 78)
         {
             newValueTree();
+            return true;
         }
     }
     return false;

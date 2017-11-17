@@ -12,11 +12,12 @@
 #include <stdio.h>
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Audio.h"
+#include "FileTransportComponent.h"
 
-class AudioFileTransportComponent : public Component, public Slider::Listener, public Button::Listener, public Timer, public KeyListener, public Audio::Listener
+class AudioFileTransportComponent : public FileTransportComponent, public Audio::Listener
 {
 public:
-    AudioFileTransportComponent(Audio& a);
+    AudioFileTransportComponent();
     ~AudioFileTransportComponent();
     
     void sliderValueChanged(Slider* slider) override;
@@ -28,15 +29,19 @@ public:
     
     void audioFileUpdated(int64 fileLength) override;
     
+    void setValueTree(ValueTree vt) override;
+    
+    void resized() override;
+    
 private:
     
     void timerCallback() override;
     
-    void resized() override;
     
-    Audio& audio;
+    
+    Audio audio;
     TextButton loadFileButton, playButton, stopButton, pauseButton;
-    Slider transportSlider;
+    Slider transportSlider, speedSlider;
     
 };
 
